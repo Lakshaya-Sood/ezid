@@ -1,0 +1,4 @@
+{
+  "ignore": [".git", "node_modules", "src/client", "public", "build"],
+  "watch": ["server"]
+}
