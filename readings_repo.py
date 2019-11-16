@@ -1,6 +1,11 @@
 import mongo_connector as mc
+from pymongo import errors
 
 readings = mc.readings
 
+
 def input_scan_data(data):
-    readings.insert_many(data)
+    try:
+        readings.insert_many(data)
+    except errors.ServerSelectionTimeoutError:
+        print("offline")
