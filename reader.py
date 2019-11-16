@@ -27,6 +27,9 @@ def stop_scan():
 
 
 def parse_chunk(chunk):
+    """Takes a chunk from the inventory telegram
+    and parses it into the different fields."""
+
     return {"uii": chunk[1],
             "antenna_id": chunk[2],
             "rssi": chunk[3:7],
@@ -34,6 +37,9 @@ def parse_chunk(chunk):
 
 
 def parse_inv(inv):
+    """Parse an inventory line.
+    Raises a runtime exception if invalid response occurs.
+    """
     if not inv.startswith(b"\x02sAN IVSingleInv"):
         raise RuntimeError("Failed to read from device.")
     else:
@@ -42,31 +48,36 @@ def parse_inv(inv):
 
 
 def retrieve_serials(duration, threshold):
-    # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # s.connect((ip, 2111))
-    result = []
+    """ Threaded data retrieval using the socket IP / TCP API.
+    It reads as often as possible during the given time.
+    Filters out every element which occurs less than the given threshold.
+    """
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((ip, 2111))
+        result = []
 
-    def retrieve():
-        t = threading.currentThread()
-        while getattr(t, "do_run", True):
-            # s.send(b"\x02sMN IVSingleInv F\x03")
-            # data = s.recv(8192)
-            data = example_data[0]
-            result.append(parse_inv(data))
-            sleep(0.5)  # TODO: remove this when using actual data
+        def retrieve():
+            t = threading.currentThread()
+            while getattr(t, "do_run", True):
+                s.send(b"\x02sMN IVSingleInv F\x03")
+                data = s.recv(8192)
+                result.append(parse_inv(data))
 
-    t = threading.Thread(target=retrieve)
-    t.start()
-    sleep(duration)
-    t.do_run = False
-    t.join()
-    # s.close()
+        t = threading.Thread(target=retrieve)
+        t.start()
+        sleep(duration)
+        t.do_run = False
+        t.join()
+        s.close()
 
-    uiis = list(map(lambda inv: inv["uii"].decode("ascii"), flatten(result)))
-    unique = set(filter(lambda uii: uiis.count(uii) > threshold, uiis))
+        uiis = list(map(lambda inv: inv["uii"].decode("ascii"), flatten(result)))
+        unique = set(filter(lambda uii: uiis.count(uii) > threshold, uiis))
 
-    return list(map(lambda uii:
-                    {"uii": uii,
-                     "timestamp": time(),
-                     "scannerid": uuid},
-                    unique))
+        return list(map(lambda uii:
+                        {"uii": uii,
+                         "timestamp": time(),
+                         "scannerid": uuid},
+                        unique))
+    except TimeoutError:
+        return None
