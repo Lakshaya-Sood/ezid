@@ -1,16 +1,29 @@
 import requests as r
 
+base_url = "http://169.254.57.201/api/"
+
+
+def fetch(method):
+    """Basic data fetch. Checks the header for any errors."""
+    res = r.get(base_url + method).json()
+
+    if res["header"]["status"] != 0:
+        raise RuntimeError("Fecthing data failed. Message: {}".format(
+            res["header"]["message"]))
+
+    return res
+
 
 def start_scan():
-    r.post("http://169.254.57.201/api/MIStartInventory")
+    r.post(base_url + "MIStartInventory")
 
 
 def stop_scan():
-    r.post("http://169.254.57.201/api/MIStopInventory")
+    r.post(base_url + "MIStopInventory")
 
 
 def is_running():
-    return r.get("http://169.254.57.201/api/QSIsQuickStartRunning").json()["data"]["QSIsQuickStartRunning"]
+    return fetch("QSIsQuickStartRunning")["data"]["QSIsQuickStartRunning"]
 
     
 def parse_serial(entry):
@@ -21,6 +34,6 @@ def parse_serial(entry):
     
 
 def retrieve_serials():
-    data = r.get("http://169.254.57.201/api/QuickstartInventoryVar").json()
+    data = fetch("QuickstartInventoryVar")
     
     return map(parse_serial, data["data"]["QuickstartInventoryVar"]["Tags"])
