@@ -8,7 +8,7 @@ def event_loop():
     button = Button(4)
     while True:
         button.wait_for_press()
-        input_scan_data(r.retrieve_serials(10))
+        input_scan_data(r.retrieve_serials(10, 1))
 
 
 event_loop()
