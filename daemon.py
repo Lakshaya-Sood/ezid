@@ -1,19 +1,23 @@
 import threading
 import logging
+import reader as r
+from time import sleep
 
-HIT_PERIOD = 1 #in seconds
+HIT_PERIOD = 1  # in seconds
+
 
 def call_per_sec(func, sec):
     def wrapper():
-        call_per_sec(func, sec)
-        func()
+        t = threading.currentThread()
+        while getattr(t, "do_run", True):
+            func()
+            sleep(HIT_PERIOD)
 
-    timer = threading.Timer(sec, wrapper)
-    timer.start()
+    t = threading.Thread(target=wrapper)
+    t.start()
+    return t
 
-    return timer
-
-def hel():
-    print("hello")
-
-call_per_sec(hel, HIT_PERIOD)
+t = call_per_sec(lambda: print(list(r.retrieve_serials())), HIT_PERIOD)
+sleep(3) # simulate the wait for the button press
+t.do_run = False
+t.join()  # wait for the thread to actually finish
