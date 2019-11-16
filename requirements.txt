@@ -1,2 +1,4 @@
 requests>=2.21.0
 gpiozero>=1.5.1
+pymongo>=3.9.0
+dnspython>=1.16.0
