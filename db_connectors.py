@@ -1,6 +1,8 @@
 from pymongo import MongoClient
 import ssl
+import sqlite3
 
+#----------MONGO DB--------
 ATLAS_SECRET = open("./mongodb_secret.txt").readlines()[0].strip()
 ATLAS_USER = "ezid_usr"
 
@@ -10,3 +12,8 @@ DB_NAME = "ezid"
 client = MongoClient(CONNECTION_URL, ssl_cert_reqs=ssl.CERT_NONE)
 db = client[DB_NAME]
 readings = db["readings"]
+
+
+#----------SQLite3--------
+conn = sqlite3.connect('readings.db')
+cursor = conn.cursor()
