@@ -19,12 +19,15 @@ def call_per_sec(func, sec):
 
 
 # testing the reading functionality
+# r.start_scan()
 
-r.start_scan()
+# t = call_per_sec(lambda: print(list(r.retrieve_serials())), HIT_PERIOD)
+# sleep(3) # simulate the wait for the button press
+# t.do_run = False
+# t.join()  # wait for the thread to actually finish
 
-t = call_per_sec(lambda: print(list(r.retrieve_serials())), HIT_PERIOD)
-sleep(3) # simulate the wait for the button press
-t.do_run = False
-t.join()  # wait for the thread to actually finish
+# r.stop_scan()
 
-r.stop_scan()
+def event_loop():
+    while True:
+        pass
