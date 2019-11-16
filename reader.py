@@ -8,6 +8,10 @@ def start_scan():
 def stop_scan():
     r.post("http://169.254.57.201/api/MIStopInventory")
 
+
+def is_running():
+    return r.get("http://169.254.57.201/api/QSIsQuickStartRunning").json()["data"]["QSIsQuickStartRunning"]
+
     
 def parse_serial(entry):
     # assuming that last 7 bytes of EPC are the serial
