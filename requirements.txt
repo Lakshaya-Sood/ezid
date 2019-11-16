@@ -1,0 +1,2 @@
+requests>=2.21.0
+gpiozero>=1.5.1
