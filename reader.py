@@ -1,16 +1,14 @@
 import requests as r
+import socket
 
 base_url = "http://169.254.57.201/api/"
+ip = "169.254.57.201"
 
 
-def fetch(method):
-    """Basic data fetch. Checks the header for any errors."""
-    res = r.get(base_url + method).json()
-
-    if res["header"]["status"] != 0:
-        raise RuntimeError("Fecthing data failed. Message: {}".format(
-            res["header"]["message"]))
-    return res
+def chunks(l, n):
+    """Yield successive n-sized chunks from l."""
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
 
 
 def start_scan():
@@ -21,18 +19,28 @@ def stop_scan():
     r.post(base_url + "MIStopInventory")
 
 
-def is_running():
-    return fetch("QSIsQuickStartRunning")["data"]["QSIsQuickStartRunning"]
+def parse_chunk(chunk):    
+    return {"uii": chunk[1],
+            "antenna_id": chunk[2],
+            "rssi": chunk[3:7],
+            "antenna_power": chunk[7:]}
 
 
-def parse_serial(entry):
-    # assuming that last 7 bytes of EPC are the serial
-    entry["serial"] = int("".join(map(lambda s: hex(s)[2:],
-                                      entry["EPC"][-7:])), 16)
-    return entry
+def parse_inv(inv):
+    if not inv.startswith(b"\x02sAN IVSingleInv"):
+        raise RuntimeError("Failed to read from device.")
+    else:
+        data = map(parse_chunk, chunks((inv[1:-1]).split()[4:], 11))
+        return list(data)
 
 
-def retrieve_serials():
-    data = fetch("QuickstartInventoryVar")
+def retrieve_serials(iterations):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((ip, 2111))
 
-    return map(parse_serial, data["data"]["QuickstartInventoryVar"]["Tags"])
+    result = []
+
+    for i in range(iterations):
+        s.send(b"\x02sMN IVSingleInv F\x03")
+        data = s.recv(8192)
+        print(parse_inv(data))
