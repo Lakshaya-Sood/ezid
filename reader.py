@@ -10,7 +10,6 @@ def fetch(method):
     if res["header"]["status"] != 0:
         raise RuntimeError("Fecthing data failed. Message: {}".format(
             res["header"]["message"]))
-
     return res
 
 
@@ -25,15 +24,15 @@ def stop_scan():
 def is_running():
     return fetch("QSIsQuickStartRunning")["data"]["QSIsQuickStartRunning"]
 
-    
+
 def parse_serial(entry):
     # assuming that last 7 bytes of EPC are the serial
     entry["serial"] = int("".join(map(lambda s: hex(s)[2:],
                                       entry["EPC"][-7:])), 16)
     return entry
-    
+
 
 def retrieve_serials():
     data = fetch("QuickstartInventoryVar")
-    
+
     return map(parse_serial, data["data"]["QuickstartInventoryVar"]["Tags"])
