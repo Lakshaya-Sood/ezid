@@ -7,8 +7,8 @@ from time import sleep
 from reader import ip
 
 button = Button(21)
-ledwifi = LED(4)
-ledscanner = LED(17)
+ledwifi = LED(17)
+ledscanner = LED(4)
 
 
 def ping(host):
