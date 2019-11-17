@@ -1,7 +1,7 @@
 import reader as r
 import threading
 from gpiozero import LED, Button
-from readings_repo import input_scan_data
+import readings_repo as db
 from subprocess import call
 from time import sleep
 from reader import ip
@@ -44,7 +44,22 @@ def event_loop():
             ledscanner.off()
         # if data is not empty, push it to the database
         elif data:
-            input_scan_data(data)
+            # check if there is a uplink connection
+            # if not, cache the data locally
+            if db.input_scan_data(data):
+                ledwifi.on()
+
+                # we got an uplink connection, try to push our cached data
+                if db.check_cache():
+                    old_data = db.read_from_cache()
+
+                    # if push was successfully, clear cash.
+                    # else try against next time
+                    if db.input_scan_data(old_data):
+                        db.clear_cache()
+            else:
+                ledwifi.off()
+                db.write_to_cache(data)
 
 
 event_loop()
