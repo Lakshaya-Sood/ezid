@@ -12,9 +12,12 @@ def input_scan_data(data):
         return None
 
 
-def write_to_cache(uui, timestamp, scannerid):
-    return readings_sql.execute("INSERT INTO readings (uui, timestamp, scannerid) VALUES (?,?,?);",
-                                [uui, timestamp, scannerid])
+def write_to_cache(data):
+    for element in data:
+        readings_sql.execute(
+            "INSERT INTO readings (uui, timestamp, scannerid) VALUES (?,?,?);",
+            [element["uui"], element["timestamp"], element["scannerid"]]
+        )
 
 
 def check_cache():
