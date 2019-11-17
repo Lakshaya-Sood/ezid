@@ -7,21 +7,21 @@ from time import sleep
 from reader import ip
 
 button = Button(21)
-ledwifi = LED(17)
-ledscanner = LED(4)
+ledwifi = LED(4)
+ledscanner = LED(17)
 
 
 def ping(host):
-    return call(["ping", "-c", "4", "-w", "2", host]) == 0
+    return call(["ping", "-c", "2", "-w", "4", host]) == 0
 
 
 def sensor_heartbeat():
     while True:
         sleep(15)
         if ping(ip):
-            ledwifi.on()
+            ledscanner.on()
         else:
-            ledwifi.off()
+            ledscanner.off()
 
 
 def event_loop():

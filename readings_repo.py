@@ -8,7 +8,8 @@ readings_sql = dc.cursor
 def input_scan_data(data):
     try:
         return readings_mongo.insert_many(data)
-    except errors.ServerSelectionTimeoutError:
+    except errors.ServerSelectionTimeoutError as e:
+        print(e)
         return None
 
 
