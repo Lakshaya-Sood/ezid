@@ -25,7 +25,7 @@ def check_cache():
     return readings_sql.execute("SELECT COUNT(*) FROM readings;").fetchone()[0] > 0
 
 
-def read_from_cache(uui, timestamp, scannerid):
+def read_from_cache():
     """Read all cached data from the database."""
     return readings_sql.execute("SELECT * FROM readings;").fetchmany()
 
