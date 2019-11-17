@@ -15,8 +15,8 @@ def input_scan_data(data):
 def write_to_cache(data):
     for element in data:
         readings_sql.execute(
-            "INSERT INTO readings (uui, timestamp, scannerid) VALUES (?,?,?);",
-            [element["uii"], element["timestamp"], element["scannerid"]]
+            "INSERT INTO readings (uii, scannerid, timestamp) VALUES (?,?,?);",
+            [element["uii"], element["scannerid"], element["timestamp"]]
         )
 
 
@@ -27,7 +27,12 @@ def check_cache():
 
 def read_from_cache():
     """Read all cached data from the database."""
-    return readings_sql.execute("SELECT * FROM readings;").fetchmany()
+    return list(map(lambda row: {"uii": row[0],
+                                 "scannerid": row[1],
+                                 "timestamp": row[2]},
+                    readings_sql.execute(
+                        "SELECT uii, scannerid, timestamp FROM readings;"
+                    ).fetchmany()))
 
 
 def clear_cache():
