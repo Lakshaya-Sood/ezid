@@ -9,12 +9,17 @@ def input_scan_data(data):
     try:
         return readings_mongo.insert_many(data)
     except errors.ServerSelectionTimeoutError:
-        print("offline")
+        return None
 
 
 def write_to_cache(uui, timestamp, scannerid):
     return readings_sql.execute("INSERT INTO readings (uui, timestamp, scannerid) VALUES (?,?,?);",
                                 [uui, timestamp, scannerid])
+
+
+def check_cache():
+    """Returns true if there is any cached data in the database."""
+    return readings_sql.execute("SELECT COUNT(*) FROM readings;").fetchone()[0] > 0
 
 
 def read_from_cache(uui, timestamp, scannerid):
