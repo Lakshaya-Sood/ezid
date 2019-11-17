@@ -23,9 +23,8 @@ def check_cache():
 
 
 def read_from_cache(uui, timestamp, scannerid):
-    cur = readings_sql.execute("SELECT * FROM readings WHERE uui=? AND timestamp=? AND scannerid=?;",
-                               [uui, timestamp, scannerid])
-    return cur.fetchmany()
+    """Read all cached data from the database."""
+    return readings_sql.execute("SELECT * FROM readings;").fetchmany()
 
 
 def clear_cache():
