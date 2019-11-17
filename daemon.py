@@ -6,10 +6,9 @@ from subprocess import call
 from time import sleep
 from reader import ip
 
-button = Button(4)
-ledwifi = LED(16)
-ledscanner = LED(20)
-ledpower = LED(21)
+button = Button(21)
+ledwifi = LED(4)
+ledscanner = LED(17)
 
 
 def ping(host):
@@ -29,7 +28,6 @@ def event_loop():
     # setup the LEDs to be active at start
     ledwifi.on()
     ledscanner.on()
-    ledpower.on()
 
     # start the sensor_heartbeat
     t = threading.Thread(target=sensor_heartbeat)
