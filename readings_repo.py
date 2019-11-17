@@ -16,7 +16,7 @@ def write_to_cache(data):
     for element in data:
         readings_sql.execute(
             "INSERT INTO readings (uui, timestamp, scannerid) VALUES (?,?,?);",
-            [element["uui"], element["timestamp"], element["scannerid"]]
+            [element["uii"], element["timestamp"], element["scannerid"]]
         )
 
 
