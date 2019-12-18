@@ -22,7 +22,9 @@ The scanner scans the packages provided by small suppliers (like a farmer) and s
 `CONS of current situation`
 
 Increased cost on scaling - Infra setup cost becomes high if this needs to duplicated at each site where small supplier is present
+
 Manual intervention - as someone has to do an email
+
 Hard to maintain - As farmer is not technically sound and Lidl/Kaufland can't provide a person at each site for maintenance in case something go wrong at supplier site. Currently if some issue happens like (device is offline or bad readings from readers) , the maintenance person near the main server (situated at big cities) ask the farmer(situated at small cities) to unplug-plug the device which is more like restart if something goes wrong. There is no way to know what when wrong.
 
 
@@ -33,15 +35,20 @@ A small setup which can be installed near RFID machine. This setup reads the dat
 More Technical -
 
 Small setup is raspberry pi + process running inside
+
 process running inside is a python daemon which pull data from reader
+
 TCP IP protocol based requests - start scanning, get data, stop scanning (raspberry pi and RFID are connected through LAN cable)
+
 python db api for caching data
+
 mongo db client created in python to do CRUD operation with MONGO server (hosted by mongo atlas on GCP)
+
 Node js API to pull data from mongo db cloud
 
 
 `PROS of our Solution`
 
-Low cost - Raspberry pie cost around($25) + free network provide Lidle(https://www.lidl.de/de/lidl-connect)
-Automated - no manual intervention required for sending data
-Possibility for Mongo DB charts(like geospatial ) and dashboard that can provide insights
+1. Low cost - Raspberry pie cost around($25) + free network provide Lidle(https://www.lidl.de/de/lidl-connect)
+2. Automated - no manual intervention required for sending data
+3. Possibility for Mongo DB charts(like geospatial ) and dashboard that can provide insights
